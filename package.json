@@ -1,0 +1,37 @@
+{
+  "name": "flower.js",
+  "version": "1.0.0",
+  "description": "Better logic flow. Create and visualize complex decision trees with ease.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "flower",
+    "flow",
+    "chart",
+    "flowchart",
+    "tree",
+    "decision",
+    "decision tree",
+    "visual",
+    "visual scripting",
+    "draw.io"
+  ],
+  "author": "Alexander George Padula <alexpadula2001@gmail.com>",
+  "license": "MIT",
+  "bin": {
+    "flower": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "co": "^4.6.0",
+    "co-prompt": "^1.0.0",
+    "commander": "^2.17.1",
+    "fast-xml-parser": "^3.12.0",
+    "progress": "^2.0.0",
+    "unescape": "^1.0.1",
+    "util": "^0.11.0",
+    "xml2js": "^0.4.19"
+  }
+}
