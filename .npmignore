@@ -65,3 +65,6 @@ package-lock.json
 
 # JetBrains
 .idea/
+
+# Project specific
+demo/

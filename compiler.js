@@ -1,6 +1,5 @@
 const fs = require('fs');
 const standardise = require('./standardiser').standardise;
-const util = require('util');
 
 module.exports.compile = function (source, destination){
     console.log("compiling... %s", source);
