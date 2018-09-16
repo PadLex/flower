@@ -1,3 +1,6 @@
+/*
+Function deceleration example.
+ */
 const bar = require('./bar');
 
 available_methonds = {
@@ -6,11 +9,11 @@ available_methonds = {
         console.log('f1: %s, %s', arg1, arg2);
     },
 
-    func2: function() {
-        console.log('f2');
+    func2: function(arg1) {
+        console.log('f2: %s', arg1);
     }
 };
 
-console.log(this.available_methonds);
+console.log(available_methonds);
 
-bar.a72b484ce617307bf_4(available_methonds);
+bar.Root(available_methonds);

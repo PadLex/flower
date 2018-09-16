@@ -1,5 +1,11 @@
+/*
+Convert Draw.io uncompressed XML to standardised JSON format.
+*/
+
+
 const parseXML = require('xml2js').parseString;
 const unescape = require('unescape');
+const util = require('util');
 
 //Redundant until support for multiple formats
 exports.standardise = function(content, callback){
@@ -7,6 +13,8 @@ exports.standardise = function(content, callback){
 };
 
 function drawDotIo(xml, callback){
+    let idToName = {};
+
     parseXML(xml, (err, json) => {
         if (err) {
             callback(err, json);
@@ -29,8 +37,6 @@ function drawDotIo(xml, callback){
         for (var i in objects) {
             var object = objects[i]['$'];
             
-            //console.log(object);
-            
             if (!object.style) {
                 continue;
             }
@@ -41,7 +47,6 @@ function drawDotIo(xml, callback){
             }
             
             if (object.style.includes('shape=cloud')) {
-                console.log(object);
                 parents[object.id] = {value: object.value, connections: [], start: true};
                 continue;
             }
@@ -58,80 +63,109 @@ function drawDotIo(xml, callback){
         }
         
         let id;
-        
+
+        //Pass value to parent connections and remove "fake" children
         for (id in children) {
             var child = children[id];
             if (child.parent in connections) {
                 connections[child.parent].value = child.value;
+                delete children[id];
             }
         }
-        
+
+        //Pass connections to real children
         for (id in connections){
             let connection = connections[id];
             
             let check = connection.value;
-            
+
+            console.log(connection.target);
+
             if(check){
+                console.log(check + ' - ' + check.replace(/<(.|\n)*?>/g, '') + ' - ' + unescape(check.replace(/<(.|\n)*?>/g, '')));
                 check = unescape(check.replace(/<(.|\n)*?>/g, ''));
             }else{
                 check = 'true'
             }
             
             if (connection.source in parents){
-                parents[connection.source].connections.push({check: check, target: 'a' + connection.target.replace('-', '_')});
+                parents[connection.source].connections.push({check: check, target: connection.target});
             }
             
             if(connection.source in children){
-                children[connection.source].connections.push({check: check, target: 'a' + connection.target.replace('-', '_')});
+                children[connection.source].connections.push({check: check, target: connection.target});
             }
         }
-        
+
+        //Pass children to parents
         for (id in children) {
             var child = children[id];
-            
-            //console.log(child);
-            
+
             let code = child.value;
             
             if (code){
                 code = unescape(code.replace(/<(.|\n)*?>/g, ''));
             }else{
-                code = ';'
+                code = ';';
             }
             
-            if(code[code.length - 1] != ';'){
-                code += ';';
-            }
+            //if(code[code.length - 1] != ';'){
+                //code += ';';
+            //}
             
             if (child.parent in parents){
-                parents[child.parent].children.push({id: 'a' + id.replace('-', '_'), code: code, connections: child.connections});
+                parents[child.parent].children.push({id: id, code: code, connections: child.connections});
             }
             
             if (child.parent in children){
                 callback("Error, nested children", json);
-                return;
+                return false;
             }
             
         }
-        
-        console.log('\nparents: ');
-        
+
+        //Make id's more human readable and add parents to output
         for (id in parents) {
             var parent = parents[id];
-            
-            /*let title = parent.value;
-            
-            if (title){
-                title = title.replace(' ', '-').replace(/<(.|\n)*?>/g, '') + '-' + id.split('-')[1];
-            }else{
-                title = id;
-            }*/
-            let title = 'a' + id.replace('-', '_');
-            
+
+            var title = parent.value;
+
+            idToName[id] = title;
+
+            var i = 0;
+            for (var childID in parent.children){
+                var child = parent.children[childID];
+
+                idToName[child.id] = title + '_' + i;
+                child.id = idToName[child.id];
+
+                i++;
+            }
+
             standardised[title] = {children: parent.children, connections: parent.connections};
         }
-        
+
+        for (title in standardised) {
+            var parent = standardised[title];
+
+            var renameConnections = [];
+
+            renameConnections = renameConnections.concat(parent.connections);
+
+            for (var childID in parent.children) {
+                var child = parent.children[childID];
+
+                renameConnections = renameConnections.concat(child.connections);
+            }
+
+            renameConnections.forEach(connection => {
+                connection.target = idToName[connection.target];
+            });
+
+        }
+
         callback(null, standardised);
+
     });
     
     //util.inspect(content);

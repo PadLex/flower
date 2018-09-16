@@ -1,0 +1,1 @@
+flower compile -s demo/draw_chart.xml -d demo/bar.js
