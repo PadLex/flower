@@ -35,7 +35,7 @@ function drawDotIo(xml, callback){
         
         //Classify objects
         for (var i in objects) {
-            var object = objects[i]['$'];
+            var object = objects[i].$;
             
             if (!object.style) {
                 continue;
@@ -55,9 +55,11 @@ function drawDotIo(xml, callback){
                 parents[object.id] = {value: object.value, connections: [], children: [], start: false};
                 continue;
             }
+
+            console.log(objects[i].mxGeometry[0].$);
             
             if (object.parent) {
-                children[object.id] = {value: object.value, parent: object.parent, connections: []};
+                children[object.id] = {value: object.value, parent: object.parent, connections: [], y: objects[i].mxGeometry[0].$.y};
             }
             
         }
@@ -77,23 +79,23 @@ function drawDotIo(xml, callback){
         for (id in connections){
             let connection = connections[id];
             
-            let check = connection.value;
+            let condition = connection.value;
 
             console.log(connection.target);
 
-            if(check){
-                console.log(check + ' - ' + check.replace(/<(.|\n)*?>/g, '') + ' - ' + unescape(check.replace(/<(.|\n)*?>/g, '')));
-                check = unescape(check.replace(/<(.|\n)*?>/g, ''));
+            if(condition){
+                console.log(condition + ' - ' + condition.replace(/<(.|\n)*?>/g, '') + ' - ' + unescape(condition.replace(/<(.|\n)*?>/g, '')));
+                condition = unescape(condition.replace(/<(.|\n)*?>/g, ''));
             }else{
-                check = 'true'
+                condition = 'true'
             }
             
             if (connection.source in parents){
-                parents[connection.source].connections.push({check: check, target: connection.target});
+                parents[connection.source].connections.push({condition: condition, target: connection.target});
             }
             
             if(connection.source in children){
-                children[connection.source].connections.push({check: check, target: connection.target});
+                children[connection.source].connections.push({condition: condition, target: connection.target});
             }
         }
 
@@ -108,13 +110,11 @@ function drawDotIo(xml, callback){
             }else{
                 code = ';';
             }
-            
-            //if(code[code.length - 1] != ';'){
-                //code += ';';
-            //}
+
+            console.log("Y: " + child.y);
             
             if (child.parent in parents){
-                parents[child.parent].children.push({id: id, code: code, connections: child.connections});
+                parents[child.parent].children.push({id: id, code: code, connections: child.connections, order: child.y});
             }
             
             if (child.parent in children){
@@ -124,7 +124,9 @@ function drawDotIo(xml, callback){
             
         }
 
-        //Make id's more human readable and add parents to output
+        // Sort children
+        // Make id's more human readable
+        // Add parents to output
         for (id in parents) {
             var parent = parents[id];
 
@@ -132,7 +134,10 @@ function drawDotIo(xml, callback){
 
             idToName[id] = title;
 
-            var i = 0;
+            //Sort children to assign appropriate names
+            parent.children.sort( (a, b) => a.order - b.order);
+
+            let i = 0;
             for (var childID in parent.children){
                 var child = parent.children[childID];
 
@@ -142,7 +147,10 @@ function drawDotIo(xml, callback){
                 i++;
             }
 
-            standardised[title] = {children: parent.children, connections: parent.connections};
+            if (parent.children.length > 0){
+                standardised[title] = {children: parent.children, connections: parent.connections};
+            }
+
         }
 
         for (title in standardised) {

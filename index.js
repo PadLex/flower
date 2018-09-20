@@ -7,8 +7,7 @@ const program = require('commander');
 
 const compiler = require('./compiler');
 
-const commands = {'compile': compiler.compile};
-
+const commands = {'compile': compiler.compile, 'test': test};
 
 
 program
@@ -66,4 +65,9 @@ function getParamNames(func) {
 function error(e){
     console.error(chalk.red(e));
     process.exit(1);
+}
+
+
+function test(){
+    console.log("Successful installation");
 }
