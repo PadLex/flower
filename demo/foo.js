@@ -1,19 +1,19 @@
 /*
 Function deceleration example.
  */
+
+//import compiled script
 const bar = require('./bar');
 
-available_methonds = {
-    
-    func1: function (arg1, arg2) {
-        console.log('f1: %s, %s', arg1, arg2);
-    },
+available_parameters = {
+    counter: 7,
 
-    func2: function(arg1) {
-        console.log('f2: %s', arg1);
+    print: function(arg1) {
+        console.log('print: %s', arg1);
     }
 };
 
-console.log(available_methonds);
+console.log(available_parameters);
 
-bar.Root(available_methonds);
+//Call first function and pass parameters used by the flowchart.
+bar.Parent(available_parameters);

@@ -29,6 +29,11 @@ module.exports.compile = function (source, destination){
         for (let p in standardised){
             let parent = standardised[p];
 
+            //Sort children to assign appropriate connections
+            // (redundant if standardiser already sorts but still necessary both for future proofing
+            // and to follow the JSON standard of not guaranteeing priority order)
+            parent.children.sort( (a, b) => a.order - b.order);
+
             /*
             Add parent function:
                 function{
@@ -39,10 +44,10 @@ module.exports.compile = function (source, destination){
 
             let code = '';
 
-            let connections = [{check: 'true', target: parent.children[0].id}].concat(parent.connections);
+            let connections = [{condition: 'true', target: parent.children[0].id}].concat(parent.connections);
 
             connections.forEach( connection => {
-                code += callMethod(connection.check, connection.target);
+                code += callMethod(connection.condition, connection.target);
             });
 
             script += newMethod(p, code);
@@ -63,13 +68,13 @@ module.exports.compile = function (source, destination){
                 code = child.code;
                 
                 if(c < parent.children.length - 1){
-                    child.connections.push({check: 'true', target: parent.children[c+1].id});
+                    child.connections.push({condition: 'true', target: parent.children[c+1].id});
                 }
 
                 for(let cn in child.connections){
                     let connection = child.connections[cn];
                     
-                    code += callMethod(connection.check, connection.target);
+                    code += callMethod(connection.condition, connection.target);
                 }
                 
                 script += newMethod(child.id, code);
@@ -92,16 +97,16 @@ function newMethod(name, code){
         + '\n};\n'
 }
 
-function callMethod(check, target){
+function callMethod(condition, target){
 
-    /*if(check === 'true'){
+    if(condition === 'true'){
         return (
-            'module.exports.' + target + '(file);'
+            '\nmodule.exports.' + target + '(file);'
         )
-    }*/
+    }
 
     return (
-        'if(' + check + '){'
+        'if(' + condition + '){'
         + 'module.exports.' + target + '(file);'
         + '}'
     )
