@@ -6,7 +6,7 @@ NPM module for improved logic flow. _Create and visualize complex decision trees
 
 * [Installation](#installation)
 * [Documentation](#documentation)
-* [Project Structure](#todo:-<project-structure>)
+* [Project Structure]()
 
 
 ## Installation
@@ -14,8 +14,6 @@ It's recommended to install the NPM package globally. By doing so NPM will autom
 ```
 npm install -g flower.js
 ```
-
-_
 
 To verify the installation run:
 ```
@@ -27,12 +25,8 @@ Expected output:
 ```
 
 ## Documentation
-<<<<<<< Updated upstream
-
 Flower allows you to compile a flowchart to a javascript file.
 The generated file can then be accessed by other scripts in your project which in turn, must pass any methods or variables you call from in the flowchart.
-=======
->>>>>>> Stashed changes
 
 * ### Editor
     Currently the only supported editor is *[draw.io](https://www.draw.io/), a popular open source flowchart editor.
@@ -81,7 +75,7 @@ The generated file can then be accessed by other scripts in your project which i
     
 * ### Compiling 
     After having installed the library and saved your flowchart in the appropriate folder you can compile it into
-     java script with the following command:
+     javascript with the following command:
      
      ```
      flower compile -s demo/draw_chart.xml -d demo/bar.js
@@ -89,12 +83,6 @@ The generated file can then be accessed by other scripts in your project which i
      
      Where `-s` is the **source** xml file and `-d` the **destination** for the compiled js file.
     
-    
-    
-    
-
-
-ToDo:
 ## ToDo: \<Project Structure\>
 
 If you intend to contribute to the project this guide will aid you in understanding the project structure and TODO's
