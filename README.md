@@ -62,7 +62,7 @@ The generated file can then be accessed by other scripts in your project which i
      
 
 * ### Exporting
-    To export a flowchart select 'File/Export as/XML'
+    To export a flowchart select `File/Export as/XML`
     
     ![example](images/selectXML_small.PNG)
     
