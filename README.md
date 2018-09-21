@@ -1,6 +1,3 @@
-# flower
-NPM module for improved logic flow. Create and visualize complex decision trees with ease.
-=======
 # Flower
 NPM module for improved logic flow. _Create and visualize complex decision trees with ease._
 
